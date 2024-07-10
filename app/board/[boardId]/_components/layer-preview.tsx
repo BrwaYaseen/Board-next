@@ -1,7 +1,7 @@
-"use client"
+"use client";
 
 import { useStorage } from "@/liveblocks.config";
-import { LayerType } from "@/types/canvas";
+import { ComplexLineLayer, LayerType } from "@/types/canvas";
 import { memo } from "react";
 import { Rectangle } from "./rectangle";
 import { Ellipse } from "./ellipse";
@@ -9,30 +9,25 @@ import { Text } from "./text";
 import { Note } from "./note";
 import { Path } from "./path";
 import { colorToCss } from "@/lib/utils";
+import { ComplexLine } from "./arrow";
 
 interface LayerPreviewProps {
-    id: string;
-    onLayerPointerDown: (e: React.PointerEvent, layerId:string)=>void;
-    selectionColor?:string;
+  id: string;
+  onLayerPointerDown: (e: React.PointerEvent, layerId: string) => void;
+  selectionColor?: string;
 }
-export const LayerPreview =memo( ({
-    id,
-    onLayerPointerDown,
-    selectionColor,
-}:LayerPreviewProps) => {
+export const LayerPreview = memo(
+  ({ id, onLayerPointerDown, selectionColor }: LayerPreviewProps) => {
+    const layer = useStorage((root) => root.layers.get(id));
 
-    const layer = useStorage((root)=> root.layers.get(id));
-
-    
-
-    if(!layer) {
-        return null;
+    if (!layer) {
+      return null;
     }
 
-    switch(layer?.type) {
-        case LayerType.Path:
+    switch (layer?.type) {
+      case LayerType.Path:
         return (
-            <Path
+          <Path
             key={id}
             x={layer.x}
             y={layer.y}
@@ -40,53 +35,59 @@ export const LayerPreview =memo( ({
             points={layer.points}
             onPointerDown={(e) => onLayerPointerDown(e, id)}
             stroke={selectionColor}
-            />
+          />
+        );
+      case LayerType.ComplexLine:
+        return (
+          <ComplexLine
+            id={id}
+            layer={layer as ComplexLineLayer}
+            onPointerDown={onLayerPointerDown}
+            selectionColor={selectionColor}
+          />
+        );
+      case LayerType.Note:
+        return (
+          <Note
+            id={id}
+            layer={layer}
+            onPointerDown={onLayerPointerDown}
+            selectionColor={selectionColor}
+          />
+        );
+      case LayerType.Text:
+        return (
+          <Text
+            id={id}
+            layer={layer}
+            onPointerDown={onLayerPointerDown}
+            selectionColor={selectionColor}
+          />
+        );
+      case LayerType.Ellipse:
+        return (
+          <Ellipse
+            id={id}
+            layer={layer}
+            onPointerDown={onLayerPointerDown}
+            selectionColor={selectionColor}
+          />
+        );
 
-        )
-        case LayerType.Note:
-            return (
-                <Note
-                id={id}
-                layer={layer}
-                onPointerDown={onLayerPointerDown}
-                selectionColor={selectionColor}
-                />
-            )
-        case LayerType.Text:
-            return (
-                <Text
-                id={id}
-                layer={layer}
-                onPointerDown={onLayerPointerDown}
-                selectionColor={selectionColor}
-                />
-            )
-        case LayerType.Ellipse:
-            return(
-                <Ellipse
-                id={id}
-                layer={layer}
-                onPointerDown={onLayerPointerDown}
-                selectionColor={selectionColor}
-                />
-            )
-        case LayerType.Rectangle:
-            return(
-                <Rectangle
-                id={id}
-                layer={layer}
-                onPointerDown={onLayerPointerDown}
-                selectionColor={selectionColor}
-                />
-
-            );
-            default:
-                console.warn("Unknown Layer Type")
-                return null;
+      case LayerType.Rectangle:
+        return (
+          <Rectangle
+            id={id}
+            layer={layer}
+            onPointerDown={onLayerPointerDown}
+            selectionColor={selectionColor}
+          />
+        );
+      default:
+        console.warn("Unknown Layer Type");
+        return null;
     }
-  
-        
+  }
+);
 
-})
-
-LayerPreview.displayName = "LayerPreview"
+LayerPreview.displayName = "LayerPreview";
