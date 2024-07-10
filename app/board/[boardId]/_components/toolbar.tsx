@@ -1,6 +1,5 @@
 import {
   Circle,
-  LineChart,
   MousePointer2,
   Pencil,
   Redo2,
@@ -62,20 +61,6 @@ export const Toolbar = ({
           isActive={
             canvasState.mode === CanvasMode.Inserting &&
             canvasState.LayerType === LayerType.Text
-          }
-        />
-        <ToolButton
-          label="Complex Line"
-          icon={LineChart}
-          onClick={() =>
-            SetCanvasState({
-              mode: CanvasMode.Inserting,
-              LayerType: LayerType.ComplexLine,
-            })
-          }
-          isActive={
-            canvasState.mode === CanvasMode.Inserting &&
-            canvasState.LayerType === LayerType.ComplexLine
           }
         />
         <ToolButton
