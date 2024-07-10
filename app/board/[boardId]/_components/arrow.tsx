@@ -34,10 +34,11 @@ export const ComplexLine = ({
       {/* Main line */}
       <path
         d={generatePath()}
-        stroke={stroke ? colorToCss(stroke) : "#000"}
+        stroke={selectionColor || (stroke ? colorToCss(stroke) : "#000")}
         strokeWidth={strokeWidth}
         fill="none"
         className="drop-shadow-md"
+        onPointerDown={(e) => onPointerDown(e, id)}
       />
 
       {/* Control points */}
@@ -47,8 +48,8 @@ export const ComplexLine = ({
           cx={point.x}
           cy={point.y}
           r={4}
-          fill={index % 2 === 0 ? "#fff" : "#4299e1"}
-          stroke="#2b6cb0"
+          fill={selectionColor ? "#4299e1" : "#fff"}
+          stroke={selectionColor || "#2b6cb0"}
           strokeWidth={2}
           onPointerDown={(e) => onPointerDown(e, `${id}-point-${index}`)}
         />

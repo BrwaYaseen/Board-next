@@ -42,7 +42,7 @@ export const LayerPreview = memo(
           <ComplexLine
             id={id}
             layer={layer as ComplexLineLayer}
-            onPointerDown={onLayerPointerDown}
+            onPointerDown={(e, id) => onLayerPointerDown(e, id)}
             selectionColor={selectionColor}
           />
         );

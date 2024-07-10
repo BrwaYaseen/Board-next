@@ -354,7 +354,6 @@ export const Canvas = ({ boardId }: CanvasProps) => {
     },
     [setCanvasState, camera, history, canvasState.mode]
   );
-
   const onPointerMove = useMutation(
     ({ setMyPresence }, e: React.PointerEvent) => {
       e.preventDefault();
