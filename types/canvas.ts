@@ -15,7 +15,6 @@ export enum LayerType {
   Path,
   Text,
   Note,
-  ComplexLine,
 }
 
 export type RectangleLayer = {
@@ -66,14 +65,6 @@ export type NoteLayer = {
   fill: Color;
   value?: string;
 };
-
-export type ComplexLineLayer = {
-  type: LayerType.ComplexLine;
-  points: { x: number; y: number }[];
-  stroke: Color;
-  strokeWidth: number;
-  value?: string;
-};
 export type Point = {
   x: number;
   y: number;
@@ -116,8 +107,7 @@ export type CanvasState =
         | LayerType.Ellipse
         | LayerType.Rectangle
         | LayerType.Text
-        | LayerType.Note
-        | LayerType.ComplexLine;
+        | LayerType.Note;
     }
   | {
       mode: CanvasMode.Resizing;
@@ -143,5 +133,4 @@ export type Layer =
   | EllipseLayer
   | PathLayer
   | TextLayer
-  | NoteLayer
-  | ComplexLineLayer;
+  | NoteLayer;

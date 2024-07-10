@@ -48,26 +48,6 @@ const MAX_LAYERS = 100;
 interface CanvasProps {
   boardId: string;
 }
-type BaseLayer = {
-  type: LayerType;
-};
-
-type ComplexLineLayer = BaseLayer & {
-  type: LayerType.ComplexLine;
-  points: { x: number; y: number }[];
-};
-
-type OtherLayer = BaseLayer & {
-  type:
-    | LayerType.Ellipse
-    | LayerType.Rectangle
-    | LayerType.Text
-    | LayerType.Note;
-  x: number;
-  y: number;
-};
-
-type Layer = ComplexLineLayer | OtherLayer;
 
 export const Canvas = ({ boardId }: CanvasProps) => {
   const layerIds = useStorage((root) => root.layerIds);
@@ -97,41 +77,23 @@ export const Canvas = ({ boardId }: CanvasProps) => {
         | LayerType.Ellipse
         | LayerType.Note
         | LayerType.Rectangle
-        | LayerType.Text
-        | LayerType.ComplexLine,
+        | LayerType.Text,
       position: Point
     ) => {
       const liveLayers = storage.get("layers");
-      const liveLayerIds = storage.get("layerIds");
-
-      if (!liveLayers || !liveLayerIds || liveLayers.size >= MAX_LAYERS) {
+      if (liveLayers.size >= MAX_LAYERS) {
         return;
       }
-
+      const liveLayerIds = storage.get("layerIds");
       const layerId = nanoid();
-      let layer: LiveObject<any>;
-
-      if (layerType === LayerType.ComplexLine) {
-        layer = new LiveObject({
-          type: LayerType.ComplexLine,
-          points: [
-            { x: position.x, y: position.y },
-            { x: position.x + 100, y: position.y },
-            { x: position.x + 200, y: position.y },
-          ],
-          stroke: lastUsedColor,
-          strokeWidth: 2,
-        });
-      } else {
-        layer = new LiveObject({
-          type: layerType,
-          x: position.x,
-          y: position.y,
-          height: 100,
-          width: 100,
-          fill: lastUsedColor,
-        });
-      }
+      const layer = new LiveObject({
+        type: layerType,
+        x: position.x,
+        y: position.y,
+        height: 100,
+        width: 100,
+        fill: lastUsedColor,
+      });
 
       liveLayerIds.push(layerId);
       liveLayers.set(layerId, layer);
@@ -154,35 +116,15 @@ export const Canvas = ({ boardId }: CanvasProps) => {
       };
 
       const liveLayers = storage.get("layers");
-      if (!liveLayers) return;
 
       for (const id of self.presence.selection) {
-        const layer = liveLayers.get(id) as LiveObject<Layer>;
+        const layer = liveLayers.get(id);
 
         if (layer) {
-          const layerType = layer.get("type");
-
-          if (layerType === LayerType.ComplexLine) {
-            const complexLineLayer = layer as LiveObject<ComplexLineLayer>;
-            const points = complexLineLayer.get("points");
-            if (Array.isArray(points)) {
-              const updatedPoints = points.map((p) => ({
-                x: p.x + offset.x,
-                y: p.y + offset.y,
-              }));
-              complexLineLayer.set("points", updatedPoints);
-            }
-          } else {
-            const otherLayer = layer as LiveObject<OtherLayer>;
-            const x = otherLayer.get("x");
-            const y = otherLayer.get("y");
-            if (typeof x === "number" && typeof y === "number") {
-              otherLayer.update({
-                x: x + offset.x,
-                y: y + offset.y,
-              });
-            }
-          }
+          layer.update({
+            x: layer.get("x") + offset.x,
+            y: layer.get("y") + offset.y,
+          });
         }
       }
 
@@ -354,6 +296,7 @@ export const Canvas = ({ boardId }: CanvasProps) => {
     },
     [setCanvasState, camera, history, canvasState.mode]
   );
+
   const onPointerMove = useMutation(
     ({ setMyPresence }, e: React.PointerEvent) => {
       e.preventDefault();

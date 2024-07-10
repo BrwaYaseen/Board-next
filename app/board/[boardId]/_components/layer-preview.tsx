@@ -1,7 +1,7 @@
 "use client";
 
 import { useStorage } from "@/liveblocks.config";
-import { ComplexLineLayer, LayerType } from "@/types/canvas";
+import { LayerType } from "@/types/canvas";
 import { memo } from "react";
 import { Rectangle } from "./rectangle";
 import { Ellipse } from "./ellipse";
@@ -9,7 +9,6 @@ import { Text } from "./text";
 import { Note } from "./note";
 import { Path } from "./path";
 import { colorToCss } from "@/lib/utils";
-import { ComplexLine } from "./arrow";
 
 interface LayerPreviewProps {
   id: string;
@@ -35,15 +34,6 @@ export const LayerPreview = memo(
             points={layer.points}
             onPointerDown={(e) => onLayerPointerDown(e, id)}
             stroke={selectionColor}
-          />
-        );
-      case LayerType.ComplexLine:
-        return (
-          <ComplexLine
-            id={id}
-            layer={layer as ComplexLineLayer}
-            onPointerDown={(e, id) => onLayerPointerDown(e, id)}
-            selectionColor={selectionColor}
           />
         );
       case LayerType.Note:
@@ -73,7 +63,6 @@ export const LayerPreview = memo(
             selectionColor={selectionColor}
           />
         );
-
       case LayerType.Rectangle:
         return (
           <Rectangle
